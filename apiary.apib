@@ -1,0 +1,103 @@
+FORMAT: 1A
+HOST: https://dronedashdevmeetup.docs.apiary.io/
+
+# Drone Dashboard
+To make it easy to test or display what the drone is upto a dashboard API is provided separately that can be called. This documents the dashboard info
+
+## Current Movement Report [/dronedash/{droneId}/currentmovement]
+
+### Current Drone Movement  [PUT]
+Shows the current movement of the drone
+            
++ Parameters
+
+    + droneId (string, required)
+
+        + Sample: 1
+        
++ Request (application/json)        
+
+    + Attributes
+        
+        + movement (Movement)
+
+
++ Response 200 (text/plain)                
+
+## Current Simple Message [/dronedash/{droneId}/simplemessage/]
+Provide a status message
+
+### Simple Message [PUT]
+Shows the current movement of the drone
+            
++ Parameters
+
+    + droneId (string, required)
+
+        + Sample: 1
+        
++ Request (application/json)        
+
+    + Attributes
+        
+        + message (Movement)
+
+
++ Response 200 (text/plain)  
+
+## Complex Message [/dronedash/{droneId}/message/{messageId}]
+This can represent any pay load. The message Id will indicate how the payload should be handled
+
+### Complex Message  [PUT]
+provides any comp[lex message with the messageId in the URI indicating the message type
+
++ Parameters
+
+    + droneId (string, required)
+
+        + Sample: 1
+        
+    + messageId (number, required)
+
+        + Sample: 1        
+        
+
++ Request (application/json)
+            
+    + Attributes
+        
+        + message (string, required)        
+    
+    
++ Response 200 (text/plain)          
+
+
+# Data Structures
+
+## Movement (object)
+- yaw: 0 (number, required)
+
+    Ranges from -100 to +100 and controls the drone rotation on its central axis. Negative values cause rotation anti clockwise and 
+    positive causes rotation in clockwise manner
+
+- roll: 0 (number, required) 
+
+    ranges from -100 to +100 with negative values representing movement to the left and positive for movement to the right
+    
+- pitch: 0 (number, required)
+
+    ranges from -100 to +100 with a negative value causing the drone front to rise skyward cause the drone to move backwards
+    and the positive range making the front move downward to the ground and drone will move forwards
+    
+- gaz: 0 (number, required)
+
+    ranges from -100 to + 100 and defines the rate of vertical movement. with a positive figure causing an increase in 
+    height and negative value causing decent
+
+
+## Location (object)
+- lat: 1.1234 (number, required)
+- long: 1.234 (number, required)
+- altitude: 1.234 (number, required)
+- heading: 1.2345 (number, optional)
+- orientation: none, location, previous, during (enum, optional)
