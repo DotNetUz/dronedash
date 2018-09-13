@@ -7,7 +7,7 @@ function (oj) {
             if (uri) {
                 this.wsUri = uri;
             } else {
-                this.wsUri = "ws://localhost:8080";
+                this.wsUri = "ws://localhost:8080/ws";
             }
         },
         connectSocket: function() {
@@ -15,10 +15,12 @@ function (oj) {
             this.websocket = new WebSocket(this.wsUri);
             this.websocket.onopen = function() {
                 console.log('Websocket Open');
+                document.getElementById("serverStatus").style.color = "#00FF00";
             };
             this.websocket.onclose = function(evt) {
                 console.log('Websocket Closed');
                 oj.Logger.error(event);
+                document.getElementById("serverStatus").style.color = "red";
             };
             this.websocket.onerror = function(evt) {
                 console.log('Websocket Error');

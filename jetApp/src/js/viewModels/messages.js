@@ -1,8 +1,9 @@
 /**
  * messages module
  */
-define(['ojs/ojcore', 'knockout', 'ojs/ojbutton', 'factories/WebsocketFactory', 'ojs/ojinputtext', 'ojs/ojformlayout'
-], function (oj, ko, io, WebsocketFactory) {
+define(['ojs/ojcore', 'knockout', 'ojs/ojbutton', 'factories/WebsocketFactory',
+        'viewModels/animation', 'ojs/ojinputtext', 'ojs/ojformlayout'
+], function (oj, ko, io, WebsocketFactory, Animation) {
     /**
      * The view model for the messages view template
      */
@@ -19,38 +20,54 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojbutton', 'factories/WebsocketFactory', 
         var i = 0;
         var websocket = WebsocketFactory.getWebsocket();
 
-        self.addMessage = function (event) {
+        self.addMessage = function (message) {
 
             var array = self.messageArray();
             
-            if (event.data) {
-                var message = JSON.parse(event.data);
-                i = i + 1;
-                array.push({
-                    "id": i,
-                    "yaw": message.movement.yaw,
-                    "roll": message.movement.roll,
-                    "pitch": message.movement.pitch,
-                    "gaz": message.movement.gaz
-                });
-            }
+            i = i + 1;
+            array.push({
+                "id": i,
+                "yaw": message.movement.yaw,
+                "roll": message.movement.roll,
+                "pitch": message.movement.pitch,
+                "gaz": message.movement.gaz
+            });
 
             self.messageArray(array);
 
         };
 
         websocket.onmessage = function (event) {
-            self.addMessage(event);
+
+            oj.Logger.error(event);
+
+            if (event.data) {
+
+                console.log(event.data);
+
+                var message = JSON.parse(event.data);
+
+                self.addMessage(message);
+                Animation.onMessage(message.movement.pitch, message.movement.yaw, message.movement.roll);
+
+            }
+
         };
 
         self.emitMessage = function() {
 
             var command = {
-                "yaw": self.yawAmount(),
-                "roll": self.rollAmount(),
-                "pitch": self.pitchAmount(),
-                "gaz": self.gazAmount()
+                "movement": {
+                    "yaw": self.yawAmount(),
+                    "roll": self.rollAmount(),
+                    "pitch": self.pitchAmount(),
+                    "gaz": self.gazAmount()
+                }
             };
+
+            //Comment out for LIVE API
+            self.addMessage(command);
+            Animation.onMessage(command.movement.pitch, command.movement.yaw, command.movement.roll);
 
             websocket.send(JSON.stringify(command));
 
